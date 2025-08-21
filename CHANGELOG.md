@@ -1,5 +1,12 @@
 # io-timesheets-app
 
+## 0.0.6
+
+### Patch Changes
+
+- 9051818: Modify `TimestampSchema` so that it doesn't crash when receiving an
+  input like `{ date: '2022-10-01' }`
+
 ## 0.0.5
 
 ### Patch Changes
