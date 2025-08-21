@@ -10,7 +10,15 @@ import { checkTimesheetsForDay } from "./check-timesheets-for-day";
 
 const __logger = createLogger({ name: "processing:check-timesheets" });
 
-export async function internal__generateTimesheets({ signal }: { signal?: AbortSignal | null | undefined }) {
+export async function internal__generateTimesheets({
+  signal,
+  start,
+  end,
+}: {
+  signal?: AbortSignal | null | undefined;
+  start?: string | null | undefined;
+  end?: string | null | undefined;
+}): Promise<void> {
   signal?.throwIfAborted();
 
   const isBambooLinked = await BambooHr.isLinked();
@@ -23,9 +31,30 @@ export async function internal__generateTimesheets({ signal }: { signal?: AbortS
   signal?.throwIfAborted();
 
   const now = DateTime.now().setZone(primaryCalendar.timeZone) as DateTime<true>;
+  const today = now.startOf("day");
   const yesterday = now.minus({ days: 1 }).startOf("day");
-  const firstDay = yesterday.minus({ days: 5 });
-  const lastDay = yesterday;
+  const firstDay = start ? DateTime.fromISO(start, { zone: primaryCalendar.timeZone }) : yesterday.minus({ days: 5 });
+  const lastDay = end
+    ? DateTime.fromISO(end, { zone: primaryCalendar.timeZone })
+    : start
+      ? DateTime.fromISO(start, { zone: primaryCalendar.timeZone })
+      : yesterday;
+
+  if (!firstDay.isValid) {
+    throw new Error("start is invalid");
+  }
+
+  if (!lastDay.isValid) {
+    throw new Error("end is invalid");
+  }
+
+  if (firstDay.toMillis() >= today.toMillis()) {
+    throw new Error("start is in the future");
+  }
+
+  if (lastDay.toMillis() >= today.toMillis()) {
+    throw new Error("end is in the future");
+  }
 
   const days: DateTime<true>[] = [];
   let currentDay = firstDay;

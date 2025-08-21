@@ -39,30 +39,31 @@ export async function assertIsValid({
   }
 }
 
-const TimesheetEntrySchema = z.object(
-  {
-    id: z.number("invalid entry ID"),
-    date: z.coerce.date("invalid date"),
-    dateStr: z.iso.date(),
-    hours: z.number("invalid hours"),
-    timezone: z.string("invalid timezone").refine((v) => DateTime.local().setZone(v).isValid),
-    note: z.string().optional(),
-    projectInfo: z.object(
-      {
-        project: z.object({
-          id: z.number("invalid project ID"),
-          name: z.string("invalid project name"),
-        }),
-        task: z.object({
-          id: z.number("invalid task ID"),
-          name: z.string("invalid task name"),
-        }),
-      },
-      "invalid project info",
-    ),
-  },
-  "invalid timesheet entry",
-);
+const TimesheetEntrySchema = z
+  .object(
+    {
+      id: z.number("invalid entry ID"),
+      date: z.iso.date(),
+      hours: z.number("invalid hours"),
+      timezone: z.string("invalid timezone").refine((v) => DateTime.local().setZone(v).isValid),
+      note: z.string().optional(),
+      projectInfo: z.object(
+        {
+          project: z.object({
+            id: z.number("invalid project ID"),
+            name: z.string("invalid project name"),
+          }),
+          task: z.object({
+            id: z.number("invalid task ID"),
+            name: z.string("invalid task name"),
+          }),
+        },
+        "invalid project info",
+      ),
+    },
+    "invalid timesheet entry",
+  )
+  .transform(({ date, ...v }) => ({ ...v, dateStr: date }));
 
 export async function getTimesheetEntries({
   start,
@@ -95,9 +96,7 @@ export async function getTimesheetEntries({
 
   const rawResponse = await response.json();
   const parsed = z.array(z.any()).parse(rawResponse);
-  return parsed
-    .map((it) => TimesheetEntrySchema.safeParse({ ...it, dateStr: it.date }).data)
-    .filter((it) => it !== undefined);
+  return parsed.map((it) => TimesheetEntrySchema.safeParse(it).data).filter((it) => it !== undefined);
 }
 
 export const BambooTaskId = {

@@ -11,10 +11,18 @@ import { queue } from "./queue";
 
 const logger = createLogger({ name: "processing:start" });
 
-export async function safeCheckTimesheets({ signal }: { signal?: AbortSignal | null | undefined } = {}): Promise<void> {
+export async function safeCheckTimesheets({
+  signal,
+  startDate,
+  endDate,
+}: {
+  signal?: AbortSignal | null | undefined;
+  startDate?: string | null | undefined;
+  endDate?: string | null | undefined;
+} = {}): Promise<void> {
   try {
     await queue
-      .add(() => internal__generateTimesheets({ signal }))
+      .add(() => internal__generateTimesheets({ signal, start: startDate, end: endDate }))
       .then(() => {
         const title = "Timesheets processed";
         const message = "All timesheets have been processed successfully.";

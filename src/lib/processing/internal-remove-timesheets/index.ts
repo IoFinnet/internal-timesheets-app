@@ -60,9 +60,12 @@ async function removeTimesheetsForDay({
 
     if (toDelete.length > 0) {
       await BambooHr.Api.deleteTimesheetEntries({ entryIds: toDelete });
-    }
 
-    await db.delete(dbSchema.timesheetsDone).where(eq(dbSchema.timesheetsDone.date, date));
+      const timesheetEntriesAgain = await BambooHr.Api.getTimesheetEntries({ end, start });
+      if (timesheetEntriesAgain.length === 0) {
+        await db.delete(dbSchema.timesheetsDone).where(eq(dbSchema.timesheetsDone.date, date));
+      }
+    }
   } catch (error) {
     logger.error({ error }, "failed to delete timesheets for day");
   }

@@ -101,7 +101,8 @@ function Shell() {
             data-header-clickable
             variant="subtle"
             size="sm"
-            aria-label="Generate timesheets"
+            aria-label="Generate recent timesheets"
+            title="Generate recent timesheets"
             onClick={() => Processing.safeCheckTimesheets()}
             loading={isProcessing}
           >

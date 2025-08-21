@@ -1,7 +1,7 @@
-import { Alert, Anchor, Button, Container, Indicator, Popover, Stack, Text } from "@mantine/core";
+import { Alert, Anchor, Button, Container, Group, Indicator, Popover, Stack, Text } from "@mantine/core";
 import { Calendar } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
-import { IconTrash } from "@tabler/icons-react";
+import { IconAlarmAverage, IconTrash } from "@tabler/icons-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { atomWithObservable } from "jotai/utils";
@@ -92,47 +92,59 @@ function Index() {
         />
 
         {!!start && (
-          <Popover trapFocus position="bottom" withArrow shadow="md" opened={opened} onChange={toggle}>
-            <Popover.Target>
-              <Button
-                size="compact-md"
-                color="red.5"
-                onClick={() => {
-                  if (opened) {
-                    Processing.safeRemoveTimesheets({ startDate: start, endDate: end ?? start });
-                    close();
-                  } else {
-                    open();
-                  }
-                }}
-                aria-label="Remove generated timesheets"
-              >
-                <IconTrash size={16} />
-              </Button>
-            </Popover.Target>
-            <Popover.Dropdown>
-              <Text size="sm">
-                <span>Click again to remove generated timesheets</span>
-                <span> </span>
-                <span>
-                  (or{" "}
-                  <Anchor
-                    c="red"
-                    onClick={() =>
-                      Processing.safeRemoveTimesheets({
-                        startDate: start,
-                        endDate: end ?? start,
-                        includeNonGeneratedOnes: true,
-                      })
+          <Group gap="md">
+            <Button
+              size="compact-md"
+              color="blue.5"
+              onClick={() => Processing.safeCheckTimesheets({ startDate: start, endDate: end ?? start })}
+              aria-label="Generate timesheets for relected days"
+              title="Generate timesheets for relected days"
+            >
+              <IconAlarmAverage size={16} />
+            </Button>
+
+            <Popover trapFocus position="bottom" withArrow shadow="md" opened={opened} onChange={toggle}>
+              <Popover.Target>
+                <Button
+                  size="compact-md"
+                  color="red.5"
+                  onClick={() => {
+                    if (opened) {
+                      Processing.safeRemoveTimesheets({ startDate: start, endDate: end ?? start });
+                      close();
+                    } else {
+                      open();
                     }
-                  >
-                    remove all
-                  </Anchor>
-                </span>
-                )
-              </Text>
-            </Popover.Dropdown>
-          </Popover>
+                  }}
+                  aria-label="Remove generated timesheets"
+                >
+                  <IconTrash size={16} />
+                </Button>
+              </Popover.Target>
+              <Popover.Dropdown>
+                <Text size="sm">
+                  <span>Click again to remove generated timesheets</span>
+                  <span> </span>
+                  <span>
+                    (or{" "}
+                    <Anchor
+                      c="red"
+                      onClick={() =>
+                        Processing.safeRemoveTimesheets({
+                          startDate: start,
+                          endDate: end ?? start,
+                          includeNonGeneratedOnes: true,
+                        })
+                      }
+                    >
+                      remove all
+                    </Anchor>
+                  </span>
+                  )
+                </Text>
+              </Popover.Dropdown>
+            </Popover>
+          </Group>
         )}
       </Stack>
     </Container>
