@@ -9,7 +9,7 @@ import { getFreshAccessToken } from "./sign-in";
 
 const TimestampSchema = z
   .unknown()
-  .transform((v): DateTime => {
+  .transform((v): DateTime | unknown => {
     if (v instanceof Date) {
       return DateTime.fromJSDate(v);
     }
@@ -30,9 +30,9 @@ const TimestampSchema = z
       return DateTime.fromISO(v.dateTime);
     }
 
-    throw new Error(`invalid timestamp: ${JSON.stringify(v)}`);
+    return v;
   })
-  .refine((v): v is DateTime<true> => v.isValid, { error: "parsed timestamp is invalid" });
+  .refine((v): v is DateTime<true> => DateTime.isDateTime(v) && v.isValid, { error: "parsed timestamp is invalid" });
 
 const CalendarInfoSchema = z.object({
   id: z.string(),
