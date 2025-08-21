@@ -1,5 +1,12 @@
 # io-timesheets-app
 
+## 0.0.9
+
+### Patch Changes
+
+- f74325a: Generate timesheets only for the last 5 days
+- f74325a: Button to generate timesheets for a selected date range
+
 ## 0.0.8
 
 ### Patch Changes
