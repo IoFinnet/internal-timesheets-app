@@ -28,6 +28,8 @@ jobs:
           workspaces: |
             src-tauri
 
+      - run: npm ci
+
       - uses: changesets/action@v1
         id: changesets
         with:
