@@ -1,5 +1,5 @@
 import escapeHTML from "escape-html";
-import { DateTime } from "luxon";
+import { DateTime, Duration } from "luxon";
 import { z } from "zod";
 
 import { BambooHr } from "~/lib/bamboohr";
@@ -33,7 +33,7 @@ export async function generateTimesheets({
       .filter((it) => !!it) ?? [];
   const email = await Google.getEmailOrThrow();
 
-  const date = start;
+  const date = start.startOf("day");
   const isBambooLinked = await BambooHr.isLinked();
   if (!isBambooLinked) {
     logger.warn("skipping job because BambooHR account is not linked");
@@ -56,9 +56,19 @@ export async function generateTimesheets({
   const events = await Google.Calendar.getEventList({ primaryCalendar, between: [start, end] });
   logger.debug({ events: events.length }, "got calendar events");
 
+  let isDayOff = false;
   let hourCount = 0;
   const entries: z.input<typeof BambooHr.Api.TimesheetEntryInput>[] = [];
   for (const event of events) {
+    if (
+      event.eventType === "outOfOffice" &&
+      Math.abs(event.end.diff(event.start).toMillis()) >= Duration.fromObject({ day: 1 }).toMillis()
+    ) {
+      logger.warn({ event }, "all-day out-of-office event found, will stop generating timesheets for this day");
+      isDayOff = true;
+      break;
+    }
+
     if (event.eventType !== "default") {
       logger.trace({ event }, "skipping non-default event");
       continue;
@@ -96,13 +106,16 @@ export async function generateTimesheets({
     logger.debug({ entry: parsed.data }, "prepared timesheet entry to be added");
   }
 
-  entries.push({
-    date,
-    hours: 8 - hourCount,
-    taskId: BambooHr.Api.BambooTaskId.Dev,
-  });
+  if (!isDayOff) {
+    entries.push({
+      date,
+      hours: 8 - hourCount,
+      taskId: BambooHr.Api.BambooTaskId.Dev,
+    });
 
-  await BambooHr.Api.addTimesheetEntries({ entries });
+    await BambooHr.Api.addTimesheetEntries({ entries });
+  }
+
   await db
     .insert(dbSchema.timesheetsDone)
     .values({ date: date.toISODate(), completedAt: now.toUTC().toJSDate() })
