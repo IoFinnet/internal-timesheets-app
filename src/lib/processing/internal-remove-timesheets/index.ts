@@ -65,6 +65,8 @@ async function removeTimesheetsForDay({
       if (timesheetEntriesAgain.length === 0) {
         await db.delete(dbSchema.timesheetsDone).where(eq(dbSchema.timesheetsDone.date, date));
       }
+    } else {
+      await db.delete(dbSchema.timesheetsDone).where(eq(dbSchema.timesheetsDone.date, date));
     }
   } catch (error) {
     logger.error({ error }, "failed to delete timesheets for day");
