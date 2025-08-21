@@ -32,7 +32,8 @@ const TimestampSchema = z
 
     return v;
   })
-  .refine((v): v is DateTime<true> => DateTime.isDateTime(v) && v.isValid, { error: "parsed timestamp is invalid" });
+  .refine((v): v is DateTime<true> => DateTime.isDateTime(v) && v.isValid, { error: "parsed timestamp is invalid" })
+  .transform((v) => v as DateTime<true>);
 
 const CalendarInfoSchema = z.object({
   id: z.string(),
