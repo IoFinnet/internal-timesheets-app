@@ -8,9 +8,20 @@ import { getAccessToken } from "./keyring";
 import { logger } from "./logger";
 import { getFreshAccessToken } from "./sign-in";
 
+const TimeZoneSchema = z.string("invalid time zone").refine((it) => DateTime.local().setZone(it).isValid);
+
 const TimestampSchema = z
-  .unknown()
-  .transform((v): DateTime | unknown => {
+  .union([
+    z.date(),
+    z
+      .unknown()
+      .refine((v) => DateTime.isDateTime(v) && v.isValid)
+      .transform((v) => v as DateTime<true>),
+    z.number(),
+    z.string(),
+    z.object({ dateTime: z.string(), timeZone: TimeZoneSchema.nullish().catch(undefined) }),
+  ])
+  .transform((v): DateTime => {
     if (v instanceof Date) {
       return DateTime.fromJSDate(v);
     }
@@ -28,10 +39,10 @@ const TimestampSchema = z
     }
 
     if (typeof v === "object" && v && "dateTime" in v && typeof v.dateTime === "string") {
-      return DateTime.fromISO(v.dateTime);
+      return DateTime.fromISO(v.dateTime, { zone: v.timeZone ?? undefined });
     }
 
-    return v;
+    throw new Error(`unexpected timestamp input: ${JSON.stringify(v)}`);
   })
   .refine((v): v is DateTime<true> => DateTime.isDateTime(v) && v.isValid, { error: "parsed timestamp is invalid" })
   .transform((v) => v as DateTime<true>);
@@ -42,7 +53,7 @@ const CalendarInfoSchema = z.object({
     .boolean()
     .nullish()
     .transform((v) => v ?? false),
-  timeZone: z.string().refine((it) => DateTime.local().setZone(it).isValid),
+  timeZone: TimeZoneSchema,
 });
 
 const EventAttendeeSchema = z.object({
