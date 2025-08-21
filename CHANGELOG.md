@@ -1,5 +1,12 @@
 # io-timesheets-app
 
+## 0.0.10
+
+### Patch Changes
+
+- f3d57d6: Ensure old recurring events that mess up the data are not returned by
+  the Google Calendar API
+
 ## 0.0.9
 
 ### Patch Changes
