@@ -5,6 +5,7 @@ import { rustFetch } from "~/lib/rust-fetch";
 
 import { GoogleAccountNotLinkedError } from "./errors";
 import { getAccessToken } from "./keyring";
+import { logger } from "./logger";
 import { getFreshAccessToken } from "./sign-in";
 
 const TimestampSchema = z
@@ -124,6 +125,7 @@ export async function getEventList({
   );
   url.searchParams.set("timeMin", between[0].toISO());
   url.searchParams.set("timeMax", between[1].toISO());
+  url.searchParams.set("singleEvents", "true");
 
   const response = await rustFetch(url.toString(), {
     headers: {
@@ -136,6 +138,9 @@ export async function getEventList({
     throw new Error(`Failed to fetch events: ${response.status} ${response.statusText}`);
   }
 
+  const rawData = await response.json();
+  logger.trace({ response: rawData }, "got raw response from Google");
+
   const data = z
     .object({
       items: z
@@ -144,7 +149,7 @@ export async function getEventList({
         .transform((v) => v ?? [])
         .transform((v) => v.filter((it) => it !== undefined)),
     })
-    .parse(await response.json());
+    .parse(rawData);
 
   return data.items;
 }
