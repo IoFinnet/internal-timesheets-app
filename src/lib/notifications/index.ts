@@ -3,12 +3,15 @@ import { isPermissionGranted, requestPermission } from "@tauri-apps/plugin-notif
 import { useAtomValue } from "jotai";
 import { atomWithObservable } from "jotai/utils";
 import { useEffect } from "react";
-import { defer, switchMap } from "rxjs";
+import { defer, switchMap, startWith } from "rxjs";
 
 import { fromTauri } from "~/lib/rx-tauri";
 
 const atom__notificationsPermission = atomWithObservable(() =>
-  fromTauri((l) => listen("tauri://focus", l)).pipe(switchMap(() => defer(async () => isPermissionGranted()))),
+  fromTauri((l) => listen("tauri://focus", l)).pipe(
+    startWith(null),
+    switchMap(() => defer(async () => isPermissionGranted())),
+  ),
 );
 
 export function useAreNotificationsGranted(): boolean {
