@@ -24,7 +24,7 @@ export async function internal__generateTimesheets({ signal }: { signal?: AbortS
 
   const now = DateTime.now().setZone(primaryCalendar.timeZone) as DateTime<true>;
   const yesterday = now.minus({ days: 1 }).startOf("day");
-  const firstDay = now.startOf("month").minus({ days: 1 }).startOf("month");
+  const firstDay = yesterday.minus({ days: 5 });
   const lastDay = yesterday;
 
   const days: DateTime<true>[] = [];
