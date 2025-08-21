@@ -75,13 +75,8 @@ export async function generateTimesheets({
     }
 
     const isOneOnOne =
-      event.attendees?.length === 2 &&
-      event.attendees?.every((it) => {
-        if (!it.email) {
-          return false;
-        }
-        return email === it.email || directReports.includes(email);
-      });
+      event.attendees.length === 2 &&
+      event.attendees.every((it) => email === it.email || directReports.includes(it.email));
 
     const hours = Math.abs(event.start.diff(event.end).as("hours"));
     const parsed = BambooHr.Api.TimesheetEntryInput.safeParse({
