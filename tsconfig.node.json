@@ -1,0 +1,14 @@
+{
+  "extends": "@tsconfig/strictest/tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+
+    /* Linting */
+    "noPropertyAccessFromIndexSignature": false
+  },
+  "include": ["vite.config.ts"]
+}

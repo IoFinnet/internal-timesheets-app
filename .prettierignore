@@ -1,0 +1,5 @@
+src-tauri/gen
+src-tauri/target
+package-lock.json
+node_modules
+routeTree.gen.ts

@@ -1,0 +1,13 @@
+*[data-tauri-drag-region] {
+  app-region: drag;
+}
+
+*[data-tauri-drag-region] > * {
+  user-select: none;
+  pointer-events: none;
+}
+
+[data-header-clickable] {
+  user-select: auto;
+  pointer-events: auto;
+}

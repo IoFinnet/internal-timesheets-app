@@ -1,0 +1,3 @@
+- This project does **not** use Tailwind CSS.
+- This is an Tauri 2 + TypeScript + React + TanStack Router + Mantine project.
+- Tauri 2 and Tauri 1 are very different. Make sure your suggestions are compatible with Tauri 2.

@@ -1,0 +1,7 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/main.tsx"],
+  "project": ["**/*.{js,ts,jsx,tsx}"],
+  "ignore": ["src-tauri/**", "**/routeTree.gen.ts"],
+  "ignoreDependencies": []
+}
