@@ -1,5 +1,18 @@
 # io-timesheets-app
 
+## 0.1.0
+
+### Minor Changes
+
+- 222fdd3: Added day-off compatibility
+
+### Patch Changes
+
+- 37baab4: Improved `TimestampSchema`
+- 38712b4: Ensure DB entry is deleted when using delete timesheets button
+- de36dc6: Fixed bug where the UI would not render until the window had lost and
+  regained focus once
+
 ## 0.0.10
 
 ### Patch Changes
