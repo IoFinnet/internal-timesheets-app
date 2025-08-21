@@ -1,5 +1,12 @@
 # io-timesheets-app
 
+## 0.0.5
+
+### Patch Changes
+
+- 80a443b: Wrapped object in `JSON.stringify()` when throwing "invalid
+  timestamp"
+
 ## 0.0.4
 
 ### Patch Changes
