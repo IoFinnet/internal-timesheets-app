@@ -1,5 +1,11 @@
 # io-timesheets-app
 
+## 0.0.7
+
+### Patch Changes
+
+- ccc19fc: Fix TS error around `TimestampSchema`
+
 ## 0.0.6
 
 ### Patch Changes
