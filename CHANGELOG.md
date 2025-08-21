@@ -1,5 +1,11 @@
 # io-timesheets-app
 
+## 0.0.8
+
+### Patch Changes
+
+- 22c901e: Fix `isOneOnOne` check
+
 ## 0.0.7
 
 ### Patch Changes
