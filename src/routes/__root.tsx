@@ -31,7 +31,7 @@ import { useGoogleAuth } from "~/lib/google";
 import { KV, useKV } from "~/lib/kv";
 import { useNotificationsEffect } from "~/lib/notifications";
 import { Processing } from "~/lib/processing";
-import { useAppMenuEffect } from "~/lib/system-menu";
+import { useAppMenuEffect, useMinimizeToSystemTrayEffect } from "~/lib/system-menu";
 import { useUpdateEffect } from "~/lib/update";
 
 export const Route = createRootRoute({
@@ -68,6 +68,7 @@ function Shell() {
 
   useGenerateEncryptionKeyEffect();
   useAppMenuEffect();
+  useMinimizeToSystemTrayEffect();
   useNotificationsEffect();
   useUpdateEffect();
 

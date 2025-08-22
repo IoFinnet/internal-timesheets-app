@@ -2,20 +2,24 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
-  "windows": [
-    "main"
-  ],
+  "windows": ["main"],
   "permissions": [
     "autostart:default",
+    "core:app:allow-app-hide",
+    "core:app:allow-app-show",
+    "core:app:allow-default-window-icon",
     "core:app:allow-set-dock-visibility",
     "core:default",
     "core:window:allow-center",
     "core:window:allow-close",
     "core:window:allow-create",
+    "core:window:allow-destroy",
     "core:window:allow-hide",
     "core:window:allow-maximize",
     "core:window:allow-minimize",
+    "core:window:allow-set-focus",
     "core:window:allow-set-resizable",
+    "core:window:allow-set-skip-taskbar",
     "core:window:allow-set-title",
     "core:window:allow-show",
     "core:window:allow-start-dragging",
@@ -23,12 +27,13 @@
     "core:window:allow-unminimize",
     "core:window:default",
     "keyring:default",
-    "opener:default",
+    "notification:default",
     "opener:allow-open-path",
     "opener:allow-open-url",
+    "opener:default",
     "os:default",
     "sql:allow-execute",
     "sql:default",
-    "notification:default"
+    "updater:default"
   ]
 }
