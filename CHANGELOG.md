@@ -1,5 +1,11 @@
 # io-timesheets-app
 
+## 0.2.0
+
+### Minor Changes
+
+- 7e8d8ac: Minimize to system tray
+
 ## 0.1.0
 
 ### Minor Changes
