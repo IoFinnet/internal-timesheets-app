@@ -1,5 +1,11 @@
 # io-timesheets-app
 
+## 0.2.2
+
+### Patch Changes
+
+- b919436: Default back to app icon if tray icon isn't found
+
 ## 0.2.1
 
 ### Patch Changes
