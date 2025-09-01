@@ -1,5 +1,11 @@
 # io-timesheets-app
 
+## 0.2.1
+
+### Patch Changes
+
+- b2ac7fc: Include tray icon in bundle
+
 ## 0.2.0
 
 ### Minor Changes
