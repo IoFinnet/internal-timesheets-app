@@ -1,7 +1,9 @@
-import { setDockVisibility } from "@tauri-apps/api/app";
+import { defaultWindowIcon, setDockVisibility } from "@tauri-apps/api/app";
 import { Menu, PredefinedMenuItem } from "@tauri-apps/api/menu";
+import * as path from "@tauri-apps/api/path";
 import { TrayIcon } from "@tauri-apps/api/tray";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import * as fs from "@tauri-apps/plugin-fs";
 import { exit } from "@tauri-apps/plugin-process";
 import { atom } from "jotai";
 import Queue from "p-queue";
@@ -9,7 +11,7 @@ import { useEffect } from "react";
 import { concat, defer, startWith, switchMap } from "rxjs";
 
 import { atomStore } from "~/lib/jotai";
-import { createLogger } from "~/lib/logger";
+import { appLogger, createLogger } from "~/lib/logger";
 import { fromTauri } from "~/lib/rx-tauri";
 
 const atom__isVisible = atom<boolean>(await getCurrentWindow().isVisible());
@@ -65,8 +67,17 @@ async function handleAppNowHidden() {
 
   const tray = await TrayIcon.new({ menu });
 
-  tray.setIcon("icons/tray.png");
-  tray.setIconAsTemplate(true);
+  try {
+    const trayIconPath = await getTrayIconPath();
+    appLogger.info({ trayIconPath }, "loading tray icon from resource dir");
+
+    tray.setIcon(trayIconPath);
+    tray.setIconAsTemplate(true);
+  } catch (err) {
+    appLogger.error({ err }, "failed to load tray icon");
+    tray.setIcon(await defaultWindowIcon());
+    tray.setIconAsTemplate(false);
+  }
 
   atomStore.set(atom__tray, tray);
 }
@@ -89,4 +100,24 @@ async function handleChange() {
       logger.error({ error }, "failed while running handleChange()");
     }
   });
+}
+
+async function getTrayIconPath(): Promise<string> {
+  if (import.meta.env.DEV) {
+    appLogger.debug("will load tray icon from project dir");
+    return "icons/tray.png";
+  }
+
+  appLogger.debug("will load tray icon from resource dir");
+
+  const resourceDir = await path.resourceDir();
+  appLogger.debug({ resourceDir }, "got resource dir path from Tauri");
+
+  const dir = await path.join(resourceDir, "icons/tray.png");
+
+  if (await fs.exists(dir)) {
+    return dir;
+  }
+
+  throw new Error(`tray icon not found: ${dir}`);
 }
